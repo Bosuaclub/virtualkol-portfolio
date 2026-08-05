@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VirtualKOL Studio — AI Automation cho Social Media</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --navy-light: #132040;
+  --gold: #c9a84c;
+  --gold-light: #d4b65a;
+  --gold-pale: #faf6ed;
+  --white: #ffffff;
+  --gray-50: #f8f9fb;
+  --gray-100: #f1f3f6;
+  --gray-200: #e2e5ea;
+  --gray-300: #c8cdd5;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --text: #1a1f2e;
+  --text-muted: #5a6170;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.06);
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text);
+  background: var(--white);
+  line-height: 1.7;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 72px;
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  background: rgba(10, 22, 40, 0.85);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  transition: var(--transition);
+}
+
+.navbar.scrolled {
+  background: rgba(10, 22, 40, 0.95);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--white);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.nav-logo .logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: var(--transition);
+  position: relative;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--gold);
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after { width: 100%; }
+
+.nav-cta {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--navy) !important;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 16px rgba(201, 168, 76, 0.3);
+}
+
+.nav-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(201, 168, 76, 0.4);
+}
+
+.nav-cta::after { display: none !important; }
+
+/* Mobile menu */
+.mobile-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 8px;
+}
+
+.mobile-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--white);
+  transition: var(--transition);
+  border-radius: 2px;
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: var(--navy);
+  position: relative;
+  overflow: hidden;
+  padding-top: 72px;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 80px 32px;
+  position: relative;
+  z-index: 1;
+  align-items: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.25);
+  color: var(--gold);
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 28px;
+}
+
+.hero-badge .dot {
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 5vw, 3.8rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+.hero h1 .gold { color: var(--gold); }
+
+.hero-desc {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.8;
+  margin-bottom: 36px;
+  max-width: 520px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--navy);
+  box-shadow: 0 4px 20px rgba(201,168,76,0.35);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(201,168,76,0.45);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.2);
+}
+
+.btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.hero-stat {
+  text-align: center;
+}
+
+.hero-stat .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.hero-stat .label {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 500;
+}
+
+/* Hero visual */
+.hero-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  padding: 32px;
+  backdrop-filter: blur(12px);
+  width: 100%;
+  max-width: 440px;
+}
+
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.flow-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: var(--transition);
+}
+
+.flow-step:hover {
+  background: rgba(201,168,76,0.08);
+  border-color: rgba(201,168,76,0.2);
+  transform: translateX(4px);
+}
+
+.flow-step .icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.flow-step .icon.research { background: rgba(59,130,246,0.2); }
+.flow-step .icon.create { background: rgba(201,168,76,0.2); }
+.flow-step .icon.publish { background: rgba(34,197,94,0.2); }
+.flow-step .icon.analyze { background: rgba(168,85,247,0.2); }
+
+.flow-step .info h4 {
+  color: var(--white);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.flow-step .info p {
+  color: rgba(255,255,255,0.45);
+  font-size: 0.8rem;
+}
+
+/* ===== SECTIONS ===== */
+.section {
+  padding: 100px 0;
+  position: relative;
+}
+
+.section-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+
+.section-label::before {
+  content: '';
+  width: 24px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 1px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+.section-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  line-height: 1.7;
+  margin-bottom: 56px;
+}
+
+/* ===== PROBLEM/SOLUTION ===== */
+.ps-section {
+  background: var(--gray-50);
+  position: relative;
+  overflow: hidden;
+}
+
+.ps-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.ps-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin-top: 16px;
+}
+
+.ps-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 40px;
+  border: 1px solid var(--gray-200);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.ps-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.ps-card.problem::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+.ps-card.solution::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+
+.ps-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.ps-card .icon-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 24px;
+}
+
+.ps-card.problem .icon-circle { background: #fef2f2; }
+.ps-card.solution .icon-circle { background: var(--gold-pale); }
+
+.ps-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--navy);
+}
+
+.ps-card ul {
+  list-style: none;
+}
+
+.ps-card li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 12px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.ps-card.problem li::before {
+  content: '✕';
+  position: absolute;
+  left: 0;
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.ps-card.solution li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #22c55e;
+  font-weight: 600;
+}
+
+/* ===== PROCESS ===== */
+.process-section {
+  background: var(--white);
+}
+
+.process-flow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  position: relative;
+}
+
+.process-flow::before {
+  content: '';
+  position: absolute;
+  top: 48px;
+  left: 60px;
+  right: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  z-index: 0;
+}
+
+.process-step {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.process-step .step-num {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 0 auto 20px;
+  border: 3px solid var(--gold-pale);
+  box-shadow: 0 0 0 8px var(--white);
+}
+
+.process-step h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.process-step p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Process detail cards */
+.process-detail {
+  margin-top: 64px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.process-detail-card {
+  background: var(--gray-50);
+  border-radius: var(--radius);
+  padding: 32px;
+  border: 1px solid var(--gray-200);
+}
+
+.process-detail-card h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.process-detail-card h4 .icon-sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.process-detail-card h4 .icon-sm.strategy { background: rgba(201,168,76,0.15); }
+.process-detail-card h4 .icon-sm.measure { background: rgba(59,130,246,0.1); }
+
+.process-detail-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.process-detail-card li {
+  padding: 10px 14px;
+  background: var(--white);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--gray-100);
+  transition: var(--transition);
+}
+
+.process-detail-card li:hover {
+  border-color: var(--gold);
+  background: var(--gold-pale);
+}
+
+.process-detail-card li .dot-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.process-detail-card li .dot-indicator.gold { background: var(--gold); }
+.process-detail-card li .dot-indicator.blue { background: #3b82f6; }
+
+/* ===== TECH ===== */
+.tech-section {
+  background: var(--navy);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.tech-section .section-title { color: var(--white); }
+.tech-section .section-subtitle { color: rgba(255,255,255,0.55); }
+.tech-section .section-label { color: var(--gold); }
+
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.tech-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.tech-card:hover {
+  background: rgba(201,168,76,0.08);
+  border-color: rgba(201,168,76,0.2);
+  transform: translateY(-4px);
+}
+
+.tech-card .tech-icon {
+  font-size: 2.2rem;
+  margin-bottom: 16px;
+}
+
+.tech-card h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.tech-card p {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.5;
+}
+
+/* ===== RESULTS ===== */
+.results-section {
+  background: var(--gray-50);
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.result-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 36px;
+  text-align: center;
+  border: 1px solid var(--gray-200);
+  transition: var(--transition);
+}
+
+.result-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.result-card .result-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.result-card .result-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.result-card .result-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Comparison bars */
+.comparison-section {
+  margin-top: 48px;
+}
+
+.comparison-item {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  margin-bottom: 20px;
+  border: 1px solid var(--gray-200);
+}
+
+.comparison-item h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 18px;
+}
+
+.comparison-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.comparison-bar .bar-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  width: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.comparison-bar .bar-track {
+  flex: 1;
+  height: 10px;
+  background: var(--gray-100);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.comparison-bar .bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 1.5s ease;
+}
+
+.comparison-bar .bar-fill.before { background: #c8cdd5; }
+.comparison-bar .bar-fill.after { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+
+.comparison-bar .bar-value {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--navy);
+  min-width: 40px;
+  text-align: right;
+}
+
+.comparison-bar .bar-value.improved { color: #22c55e; }
+
+/* ===== FEATURES ===== */
+.features-section {
+  background: var(--white);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.feature-card {
+  padding: 36px;
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-200);
+  transition: var(--transition);
+  background: var(--white);
+}
+
+.feature-card:hover {
+  border-color: var(--gold);
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.feature-card .feature-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  background: var(--gold-pale);
+}
+
+.feature-card h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ===== ARCHITECTURE ===== */
+.arch-section {
+  background: var(--gray-50);
+}
+
+.arch-diagram {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 48px;
+  border: 1px solid var(--gray-200);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 16px;
+  align-items: center;
+  text-align: center;
+}
+
+.arch-layer {
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+  padding: 24px 16px;
+  border: 1px solid var(--gray-200);
+}
+
+.arch-layer h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+
+.arch-layer .arch-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.arch-layer .arch-item {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 6px 12px;
+  background: var(--white);
+  border-radius: 6px;
+  border: 1px solid var(--gray-100);
+}
+
+.arch-arrow {
+  font-size: 1.5rem;
+  color: var(--gold);
+  font-weight: 300;
+}
+
+/* ===== CTA ===== */
+.cta-section {
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+}
+
+.cta-section .section-inner { position: relative; z-index: 1; }
+
+.cta-section .section-title { color: var(--white); }
+.cta-section .section-subtitle { color: rgba(255,255,255,0.55); margin-left: auto; margin-right: auto; }
+
+/* ===== FOOTER ===== */
+.footer {
+  background: var(--navy);
+  color: rgba(255,255,255,0.5);
+  padding: 64px 0 32px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.footer-brand .logo-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+.footer-brand p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  max-width: 280px;
+}
+
+.footer-col h4 {
+  color: var(--white);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-col a {
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.footer-col a:hover { color: var(--gold); }
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 32px;
+  font-size: 0.85rem;
+}
+
+/* ===== SCROLL ANIMATIONS ===== */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-in-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fade-in-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+  .hero-visual { order: -1; }
+  .ps-grid { grid-template-columns: 1fr; }
+  .tech-grid { grid-template-columns: repeat(2, 1fr); }
+  .results-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .process-flow { grid-template-columns: repeat(2, 1fr); }
+  .process-flow::before { display: none; }
+  .process-detail { grid-template-columns: 1fr; }
+  .arch-diagram { grid-template-columns: 1fr; gap: 12px; }
+  .arch-arrow { transform: rotate(90deg); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .mobile-toggle { display: flex; }
+  .section { padding: 64px 0; }
+  .hero-stats { grid-template-columns: 1fr; gap: 8px; }
+  .tech-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  .process-flow { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .comparison-bar .bar-label { width: 40px; font-size: 0.7rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="logo-icon">🎭</span>
+      VirtualKOL Studio
+    </a>
+    <ul class="nav-links">
+      <li><a href="#overview" class="active">Tổng Quan</a></li>
+      <li><a href="#problem">Vấn Đề</a></li>
+      <li><a href="#process">Quy Trình</a></li>
+      <li><a href="#tech">Công Nghệ</a></li>
+      <li><a href="#results">Kết Quả</a></li>
+      <li><a href="#features">Tính Năng</a></li>
+      <li><a href="#contact" class="nav-cta">Liên Hệ</a></li>
+    </ul>
+    <button class="mobile-toggle" id="mobileToggle">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="overview">
+  <div class="hero-grid">
+    <div class="fade-in-left">
+      <div class="hero-badge">
+        <span class="dot"></span> AI Automation Platform
+      </div>
+      <h1>
+        Tự Động Hóa <span class="gold">Social Media</span><br>
+        Bằng AI Thông Minh
+      </h1>
+      <p class="hero-desc">
+        VirtualKOL Studio — Nền tảng tự động hóa quy trình sáng tạo và đăng tải nội dung 
+        lên mạng xã hội bằng AI. Từ nghiên cứu thị trường, sáng tạo nội dung, sinh ảnh 
+        đến tự động đăng bài & phân tích hiệu quả — tất cả trong một hệ thống duy nhất.
+      </p>
+      <div class="hero-buttons">
+        <a href="#process" class="btn btn-primary">Xem Quy Trình →</a>
+        <a href="#features" class="btn btn-outline">Khám Phá Tính Năng</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="num">526+</div>
+          <div class="label">KOL Đang Vận Hành</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num">2×/ngày</div>
+          <div class="label">Tần Suất Đăng Bài</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num">24/7</div>
+          <div class="label">Tự Động Hoàn Toàn</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual fade-in-right">
+      <div class="hero-card">
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="icon research">🔍</div>
+            <div class="info">
+              <h4>Nghiên Cứu Thị Trường</h4>
+              <p>Thu thập xu hướng & dữ liệu tự động</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="icon create">✍️</div>
+            <div class="info">
+              <h4>Sáng Tạo Nội Dung</h4>
+              <p>AI viết content + sinh ảnh phù hợp</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="icon publish">🚀</div>
+            <div class="info">
+              <h4>Tự Động Đăng Bài</h4>
+              <p>Lên lịch & đăng lên Facebook</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="icon analyze">📊</div>
+            <div class="info">
+              <h4>Phân Tích & Tối Ưu</h4>
+              <p>Đo lường hiệu quả, cải thiện liên tục</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROBLEM & SOLUTION ===== -->
+<section class="section ps-section" id="problem">
+  <div class="section-inner">
+    <span class="section-label">Vấn Đề & Giải Pháp</span>
+    <h2 class="section-title">Tại Sao Cần VirtualKOL Studio?</h2>
+    <p class="section-subtitle">
+      Thị trường social media ngày càng cạnh tranh. Việc duy trì nội dung đều đặn, 
+      chất lượng cho hàng trăm tài khoản là bài toán không thể giải quyết bằng sức người.
+    </p>
+    <div class="ps-grid">
+      <div class="ps-card problem fade-in-left">
+        <div class="icon-circle">⚠️</div>
+        <h3>Thách Thức Hiện Tại</h3>
+        <ul>
+          <li>Tốn 3-5 giờ/ngày để viết content cho mỗi KOL</li>
+          <li>Khó duy trì đăng bài đều đặn 2 lần/ngày</li>
+          <li>Chi phí thuê người viết content & designer cao</li>
+          <li>Không có hệ thống đo lường hiệu quả thống nhất</li>
+          <li>Khó scale khi số lượng KOL tăng lên hàng trăm</li>
+          <li>Nội dung thiếu nhất quán về phong cách & thương hiệu</li>
+          <li>Token Facebook thường xuyên hết hạn, gián đoạn đăng bài</li>
+        </ul>
+      </div>
+      <div class="ps-card solution fade-in-right">
+        <div class="icon-circle">💡</div>
+        <h3>Giải Pháp VirtualKOL</h3>
+        <ul>
+          <li>Tự động hóa 100% quy trình từ ý tưởng → đăng bài</li>
+          <li>AI viết content theo phong cách từng KOL, sinh ảnh phù hợp</li>
+          <li>Hệ thống lên lịch thông minh, đăng 2 slot/ngày tự động</li>
+          <li>Dashboard đo lường tập trung cho toàn bộ hệ thống</li>
+          <li>Scale không giới hạn — 526 KOL vận hành đồng thời</li>
+          <li>Multi-source content: Firestore, Excel, Drive folder</li>
+          <li>Cơ chế retry & fallback khi token lỗi, đảm bảo uptime</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTENT PROCESS ===== -->
+<section class="section process-section" id="process">
+  <div class="section-inner">
+    <span class="section-label">Quy Trình Nội Dung</span>
+    <h2 class="section-title">Từ Content Matrix đến Tối Ưu Hiệu Quả</h2>
+    <p class="section-subtitle">
+      Quy trình khép kín 4 giai đoạn, đảm bảo mỗi bài đăng đều có chiến lược và được đo lường.
+    </p>
+    
+    <div class="process-flow">
+      <div class="process-step fade-in" style="transition-delay: 0s">
+        <div class="step-num">1</div>
+        <h4>Content Matrix v2</h4>
+        <p>Xây dựng ma trận nội dung theo chủ đề, nhân vật, kịch bản. Phân loại theo đối tượng & phong cách KOL.</p>
+      </div>
+      <div class="process-step fade-in" style="transition-delay: 0.15s">
+        <div class="step-num">2</div>
+        <h4>Sáng Tạo & Sinh Ảnh</h4>
+        <p>AI tạo nội dung từ ma trận + sinh ảnh bằng Google Imagen. Content phù hợp cá tính từng KOL.</p>
+      </div>
+      <div class="process-step fade-in" style="transition-delay: 0.3s">
+        <div class="step-num">3</div>
+        <h4>Tự Động Đăng Bài</h4>
+        <p>Lên lịch 2 slot/ngày (06:00 & 18:00). Đăng bài + comment teaser + reply link. Xử lý hàng loạt.</p>
+      </div>
+      <div class="process-step fade-in" style="transition-delay: 0.45s">
+        <div class="step-num">4</div>
+        <h4>Tương Tác & Thống Kê</h4>
+        <p>Đo lường like, comment, share. Phân tích xu hướng để tối ưu content cho chu kỳ tiếp theo.</p>
+      </div>
+    </div>
+
+    <div class="process-detail">
+      <div class="process-detail-card fade-in-left">
+        <h4><span class="icon-sm strategy">🎯</span> Chiến Lược Nội Dung</h4>
+        <ul>
+          <li><span class="dot-indicator gold"></span> Content Matrix v2 — Phân loại chủ đề × nhân vật × kịch bản</li>
+          <li><span class="dot-indicator gold"></span> 87 scenarios pre-matched (family, affair, romance, revenge)</li>
+          <li><span class="dot-indicator gold"></span> Multi-source: Firestore Storage, Google Drive, Excel sheets</li>
+          <li><span class="dot-indicator gold"></span> Per-slot content source — mỗi khung giờ 1 nguồn riêng</li>
+          <li><span class="dot-indicator gold"></span> AI temperature=0.92 — đảm bảo diversity giữa các lần gen</li>
+        </ul>
+      </div>
+      <div class="process-detail-card fade-in-right">
+        <h4><span class="icon-sm measure">📈</span> Đo Lường & Tối Ưu</h4>
+        <ul>
+          <li><span class="dot-indicator blue"></span> Real-time dashboard — trạng thái từng KOL (LIVE/POLLING)</li>
+          <li><span class="dot-indicator blue"></span> Theo dõi lượt tương tác: like, comment, share mỗi bài</li>
+          <li><span class="dot-indicator blue"></span> Phân tích slot hiệu quả — tối ưu khung giờ đăng</li>
+          <li><span class="dot-indicator blue"></span> Token health monitoring — cảnh báo khi token sắp hết hạn</li>
+          <li><span class="dot-indicator blue"></span> Auto-retry 3 lần + fallback khi lỗi — đảm bảo delivery</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TECHNOLOGY ===== -->
+<section class="section tech-section" id="tech">
+  <div class="section-inner">
+    <span class="section-label">Công Nghệ</span>
+    <h2 class="section-title">Kiến Trúc Hiện Đại, Sẵn Sàng Scale</h2>
+    <p class="section-subtitle">
+      Hệ thống được xây dựng trên nền tảng cloud-native, đảm bảo hiệu năng và độ tin cậy cao.
+    </p>
+    <div class="tech-grid">
+      <div class="tech-card fade-in" style="transition-delay: 0s">
+        <div class="tech-icon">🐍</div>
+        <h4>Python FastAPI</h4>
+        <p>Backend hiệu năng cao, async support, xử lý hàng trăm KOL đồng thời</p>
+      </div>
+      <div class="tech-card fade-in" style="transition-delay: 0.1s">
+        <div class="tech-icon">⚛️</div>
+        <h4>React + TypeScript</h4>
+        <p>Frontend SPA hiện đại, responsive, dashboard quản lý tập trung</p>
+      </div>
+      <div class="tech-card fade-in" style="transition-delay: 0.2s">
+        <div class="tech-icon">🔥</div>
+        <h4>Firebase / Firestore</h4>
+        <p>Database realtime, storage cho ảnh & content, auto-scaling</p>
+      </div>
+      <div class="tech-card fade-in" style="transition-delay: 0.3s">
+        <div class="tech-icon">🐳</div>
+        <h4>Docker + Caddy</h4>
+        <p>Containerized deployment, auto-SSL, reverse proxy production-grade</p>
+      </div>
+      <div class="tech-card fade-in" style="transition-delay: 0.1s">
+        <div class="tech-icon">🤖</div>
+        <h4>Kimi K2.5 + Imagen</h4>
+        <p>AI text generation + image creation qua NanoAI proxy</p>
+      </div>
+      <div class="tech-card fade-in" style="transition-delay: 0.2s">
+        <div class="tech-icon">📘</div>
+        <h4>Facebook Graph API</h4>
+        <p>Đăng bài, comment, reply tự động qua API chính thức</p>
+      </div>
+      <div class="tech-card fade-in" style="transition-delay: 0.3s">
+        <div class="tech-icon">☁️</div>
+        <h4>VPS DigitalOcean</h4>
+        <p>Hosting ổn định, 24/7 uptime, auto-recovery khi crash</p>
+      </div>
+      <div class="tech-card fade-in" style="transition-delay: 0.4s">
+        <div class="tech-icon">📊</div>
+        <h4>Monitoring Stack</h4>
+        <p>Health check tự động, alert khi backend down, heartbeat monitoring</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SYSTEM ARCHITECTURE ===== -->
+<section class="section arch-section">
+  <div class="section-inner">
+    <span class="section-label">Kiến Trúc Hệ Thống</span>
+    <h2 class="section-title">Luồng Dữ Liệu & Xử Lý</h2>
+    <p class="section-subtitle">
+      Hệ thống được thiết kế theo mô hình pipeline, mỗi tầng xử lý độc lập và có thể scale riêng.
+    </p>
+    <div class="arch-diagram">
+      <div class="arch-layer">
+        <h4>🎭 KOL Manager</h4>
+        <div class="arch-items">
+          <div class="arch-item">Quản lý 526+ KOL</div>
+          <div class="arch-item">Cấu hình cá nhân</div>
+          <div class="arch-item">Token Facebook</div>
+          <div class="arch-item">Lịch đăng bài</div>
+        </div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-layer">
+        <h4>🧠 AI Engine</h4>
+        <div class="arch-items">
+          <div class="arch-item">Content Matrix v2</div>
+          <div class="arch-item">Kimi K2.5 Text Gen</div>
+          <div class="arch-item">Imagen Photo Gen</div>
+          <div class="arch-item">Scenario Matching</div>
+        </div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-layer">
+        <h4>🚀 Publisher</h4>
+        <div class="arch-items">
+          <div class="arch-item">Batch Processing</div>
+          <div class="arch-item">2-Step Comment</div>
+          <div class="arch-item">Concurrent x10</div>
+          <div class="arch-item">Retry & Fallback</div>
+        </div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-layer">
+        <h4>📊 Analytics</h4>
+        <div class="arch-items">
+          <div class="arch-item">Dashboard Live</div>
+          <div class="arch-item">Health Monitor</div>
+          <div class="arch-item">Token Status</div>
+          <div class="arch-item">Tối ưu Slot</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RESULTS ===== -->
+<section class="section results-section" id="results">
+  <div class="section-inner">
+    <span class="section-label">Kết Quả & Số Liệu</span>
+    <h2 class="section-title">Hiệu Quả Đã Được Chứng Minh</h2>
+    <p class="section-subtitle">
+      Số liệu thực tế từ hệ thống đang vận hành 24/7 với 526 KOL.
+    </p>
+    
+    <div class="results-grid">
+      <div class="result-card fade-in" style="transition-delay: 0s">
+        <div class="result-num">526+</div>
+        <div class="result-label">KOL Đang Hoạt Động</div>
+        <div class="result-desc">Vận hành đồng thời, mỗi KOL có cá tính & lịch đăng riêng</div>
+      </div>
+      <div class="result-card fade-in" style="transition-delay: 0.15s">
+        <div class="result-num">1,052</div>
+        <div class="result-label">Bài Đăng / Ngày</div>
+        <div class="result-desc">2 slot/ngày × 526 KOL, tự động hoàn toàn không cần can thiệp</div>
+      </div>
+      <div class="result-card fade-in" style="transition-delay: 0.3s">
+        <div class="result-num">~10 phút</div>
+        <div class="result-label">Thời Gian Xử Lý</div>
+        <div class="result-desc">Batch process 526 KOL với concurrent semaphore=10</div>
+      </div>
+    </div>
+
+    <div class="comparison-section">
+      <div class="comparison-item fade-in">
+        <h4>⏱️ Thời Gian Tạo Nội Dung</h4>
+        <div class="comparison-bar">
+          <span class="bar-label">Trước</span>
+          <div class="bar-track"><div class="bar-fill before" style="width: 100%"></div></div>
+          <span class="bar-value">3-5h/KOL</span>
+        </div>
+        <div class="comparison-bar">
+          <span class="bar-label">Sau</span>
+          <div class="bar-track"><div class="bar-fill after" style="width: 5%"></div></div>
+          <span class="bar-value improved">~2 phút ↓95%</span>
+        </div>
+      </div>
+      <div class="comparison-item fade-in">
+        <h4>💰 Chi Phí Vận Hành</h4>
+        <div class="comparison-bar">
+          <span class="bar-label">Trước</span>
+          <div class="bar-track"><div class="bar-fill before" style="width: 100%"></div></div>
+          <span class="bar-value">~50M/tháng</span>
+        </div>
+        <div class="comparison-bar">
+          <span class="bar-label">Sau</span>
+          <div class="bar-track"><div class="bar-fill after" style="width: 12%"></div></div>
+          <span class="bar-value improved">~6M/tháng ↓88%</span>
+        </div>
+      </div>
+      <div class="comparison-item fade-in">
+        <h4>📈 Tỉ Lệ Đăng Bài Thành Công</h4>
+        <div class="comparison-bar">
+          <span class="bar-label">Trước</span>
+          <div class="bar-track"><div class="bar-fill before" style="width: 70%"></div></div>
+          <span class="bar-value">70%</span>
+        </div>
+        <div class="comparison-bar">
+          <span class="bar-label">Sau</span>
+          <div class="bar-track"><div class="bar-fill after" style="width: 94%"></div></div>
+          <span class="bar-value improved">94% ↑24%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="section features-section" id="features">
+  <div class="section-inner">
+    <span class="section-label">Tính Năng Nổi Bật</span>
+    <h2 class="section-title">Mọi Thứ Bạn Cần Trong Một Nền Tảng</h2>
+    <p class="section-subtitle">
+      VirtualKOL Studio tích hợp đầy đủ công cụ để vận hành hệ thống KOL quy mô lớn.
+    </p>
+    <div class="features-grid">
+      <div class="feature-card fade-in" style="transition-delay: 0s">
+        <div class="feature-icon">🎭</div>
+        <h4>Quản Lý Đa KOL</h4>
+        <p>Hỗ trợ 526+ tài khoản KOL đồng thời. Mỗi KOL có profile, token, lịch đăng và phong cách riêng biệt.</p>
+      </div>
+      <div class="feature-card fade-in" style="transition-delay: 0.1s">
+        <div class="feature-icon">🤖</div>
+        <h4>AI Content Generator</h4>
+        <p>AI tự động viết nội dung theo phong cách từng KOL. Hỗ trợ đa thể loại: family, affair, romance, revenge.</p>
+      </div>
+      <div class="feature-card fade-in" style="transition-delay: 0.2s">
+        <div class="feature-icon">🖼️</div>
+        <h4>Sinh Ảnh Tự Động</h4>
+        <p>Google Imagen tạo ảnh phù hợp nội dung. Auto-retry khi safety filter, đảm bảo luôn có ảnh đẹp.</p>
+      </div>
+      <div class="feature-card fade-in" style="transition-delay: 0s">
+        <div class="feature-icon">⏰</div>
+        <h4>Lên Lịch Thông Minh</h4>
+        <p>2 slot/ngày (06:00 & 18:00). Per-slot content source — mỗi khung giờ có nguồn nội dung riêng.</p>
+      </div>
+      <div class="feature-card fade-in" style="transition-delay: 0.1s">
+        <div class="feature-icon">💬</div>
+        <h4>2-Step Comment Flow</h4>
+        <p>Tự động comment teaser "Like & comment để xem full story" → reply link. 279/279 post thành công.</p>
+      </div>
+      <div class="feature-card fade-in" style="transition-delay: 0.2s">
+        <div class="feature-icon">🔄</div>
+        <h4>Batch Processing</h4>
+        <p>Xử lý đồng thời 10 KOL/lượt. 526 KOL hoàn thành trong ~10 phút. Background task, non-blocking.</p>
+      </div>
+      <div class="feature-card fade-in" style="transition-delay: 0s">
+        <div class="feature-icon">📊</div>
+        <h4>Realtime Dashboard</h4>
+        <p>Firebase onSnapshot — cập nhật trạng thái KOL realtime. Status dot LIVE/POLLING/CONNECTING.</p>
+      </div>
+      <div class="feature-card fade-in" style="transition-delay: 0.1s">
+        <div class="feature-icon">🛡️</div>
+        <h4>Error Handling</h4>
+        <p>Try/except mọi tầng, retry 3 lần, fallback khi token lỗi. Comment failure không ảnh hưởng post chính.</p>
+      </div>
+      <div class="feature-card fade-in" style="transition-delay: 0.2s">
+        <div class="feature-icon">📝</div>
+        <h4>Multi-Source Content</h4>
+        <p>Nội dung từ Firestore, Excel sheets, Drive folder. 87 scenarios pre-matched đảm bảo chất lượng.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section cta-section" id="contact">
+  <div class="section-inner">
+    <span class="section-label">Bắt Đầu Ngay</span>
+    <h2 class="section-title">Sẵn Sàng Tự Động Hóa<br>Social Media Của Bạn?</h2>
+    <p class="section-subtitle">
+      VirtualKOL Studio đã được chứng minh hiệu quả với 526+ KOL.<br>
+      Hãy để chúng tôi giúp bạn scale hệ thống content của mình.
+    </p>
+    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 32px;">
+      <a href="https://createdcake.com" target="_blank" class="btn btn-primary" style="font-size: 1rem; padding: 16px 40px;">
+        Truy Cập Dashboard →
+      </a>
+      <a href="mailto:bosuaclub@gmail.com" class="btn btn-outline" style="font-size: 1rem; padding: 16px 40px;">
+        Liên Hệ Hợp Tác
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="section-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-text">VirtualKOL Studio</div>
+        <p>Nền tảng tự động hóa social media bằng AI. Từ nghiên cứu thị trường đến phân tích hiệu quả — tất cả trong một hệ thống.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Tính Năng</h4>
+        <ul>
+          <li><a href="#process">Quy Trình Nội Dung</a></li>
+          <li><a href="#features">AI Content Gen</a></li>
+          <li><a href="#features">Batch Processing</a></li>
+          <li><a href="#features">Realtime Dashboard</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Công Nghệ</h4>
+        <ul>
+          <li><a href="#tech">Python FastAPI</a></li>
+          <li><a href="#tech">React + TypeScript</a></li>
+          <li><a href="#tech">Firebase</a></li>
+          <li><a href="#tech">Docker + Caddy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Liên Kết</h4>
+        <ul>
+          <li><a href="https://createdcake.com" target="_blank">Dashboard</a></li>
+          <li><a href="mailto:bosuaclub@gmail.com">Email</a></li>
+          <li><a href="https://github.com/bosuaclub" target="_blank">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 VirtualKOL Studio. Built with ❤️ by Dũng & AI.
+    </div>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll effect
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right').forEach(el => {
+  observer.observe(el);
+});
+
+// Active nav link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a:not(.nav-cta)');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.offsetTop - 100;
+    if (window.scrollY >= top) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// Mobile menu toggle
+const toggle = document.getElementById('mobileToggle');
+const navLinksEl = document.querySelector('.nav-links');
+
+toggle.addEventListener('click', () => {
+  navLinksEl.style.display = navLinksEl.style.display === 'flex' ? 'none' : 'flex';
+  navLinksEl.style.flexDirection = 'column';
+  navLinksEl.style.position = 'absolute';
+  navLinksEl.style.top = '72px';
+  navLinksEl.style.left = '0';
+  navLinksEl.style.right = '0';
+  navLinksEl.style.background = 'rgba(10, 22, 40, 0.98)';
+  navLinksEl.style.padding = '24px 32px';
+  navLinksEl.style.gap = '20px';
+  navLinksEl.style.backdropFilter = 'blur(24px)';
+  navLinksEl.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
+});
+
+// Animate comparison bars on scroll
+const comparisonObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const bars = entry.target.querySelectorAll('.bar-fill.after');
+      bars.forEach(bar => {
+        const w = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => { bar.style.width = w; }, 200);
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.comparison-item').forEach(el => {
+  comparisonObserver.observe(el);
+});
+</script>
+
+</body>
+</html>
